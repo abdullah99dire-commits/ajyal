@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/splash_screen.dart';
-import 'screens/registration_screen.dart';
 import 'services/progress.dart';
 import 'theme.dart';
 
@@ -26,6 +25,6 @@ class AjyalApp extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        home: Builder(builder: (context) => Progress.i.isRegistered ? const SplashScreen() : const RegistrationScreen()),
+        home: const SplashScreen(),
       );
 }
