@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/progress.dart';
 import '../theme.dart';
+import '../widgets.dart';
+import 'achievements_screen.dart';
 
 /// حساب الطالب
 class ProfileScreen extends StatelessWidget {
@@ -28,32 +30,73 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: appBar('حساب الطالب', color: AppColors.teal),
+        appBar: appBar('حساب الطالب',
+            back: false, icon: Icons.settings, onIcon: () => _editName(context)),
         body: ListenableBuilder(
           listenable: Progress.i,
           builder: (context, _) {
             final p = Progress.i;
+            final earned = badges.where((b) => b.unlocked(p)).take(3).toList();
             return ListView(padding: const EdgeInsets.all(16), children: [
-              Center(
-                child: CircleAvatar(
-                    radius: 44,
-                    backgroundColor: AppColors.teal,
-                    child: Text(p.name.characters.first,
-                        style: const TextStyle(fontSize: 40, color: Colors.white))),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Row(children: [
+                    const CircleAvatar(
+                      radius: 36,
+                      backgroundColor: Color(0xFFD7ECFF),
+                      child: Text('🧒', style: TextStyle(fontSize: 40)),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(p.name,
+                                style: const TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.bold)),
+                            const Text('طالب في المدرسة الإسلامية العربية',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.black54)),
+                          ]),
+                    ),
+                    IconButton(
+                        onPressed: () => _editName(context),
+                        icon: const Icon(Icons.edit)),
+                  ]),
+                ),
               ),
-              const SizedBox(height: 12),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text(p.name,
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold)),
-                IconButton(
-                    onPressed: () => _editName(context),
-                    icon: const Icon(Icons.edit)),
-              ]),
-              const SizedBox(height: 16),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Ring(
+                            value: p.lettersPercent,
+                            color: AppColors.green2,
+                            label: 'العربية'),
+                        Ring(
+                            value: p.rashidiPercent,
+                            color: AppColors.blue,
+                            label: 'الجزء الرشيدي'),
+                        Ring(
+                            value: p.quranPercent,
+                            color: AppColors.orange,
+                            label: 'القرآن'),
+                      ]),
+                ),
+              ),
               Card(
                 child: ListTile(
-                  leading: const Text('⭐', style: TextStyle(fontSize: 28)),
+                  leading: const Icon(Icons.menu_book, color: AppColors.blue),
+                  title: const Text('آخر نشاط'),
+                  subtitle: Text(p.lastActivity),
+                ),
+              ),
+              Card(
+                child: ListTile(
+                  leading: const Text('🏅', style: TextStyle(fontSize: 28)),
                   title: const Text('نقاطي'),
                   trailing: Text('${p.points}',
                       style: const TextStyle(
@@ -66,14 +109,24 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('الحروف المتعلَّمة: ${p.learned.length} / 28',
-                            style: const TextStyle(fontSize: 16)),
-                        const SizedBox(height: 8),
-                        LinearProgressIndicator(
-                            value: p.lettersPercent,
-                            minHeight: 10,
-                            borderRadius: BorderRadius.circular(8),
-                            color: AppColors.green2),
+                        const Text('شاراتي',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 10),
+                        if (earned.isEmpty)
+                          const Text('اجمع النقاط لتحصل على شارات',
+                              style: TextStyle(color: Colors.black54))
+                        else
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: earned
+                                  .map((b) => Column(children: [
+                                        Text(b.emoji,
+                                            style: const TextStyle(fontSize: 40)),
+                                        Text(b.title,
+                                            style: const TextStyle(fontSize: 12)),
+                                      ]))
+                                  .toList()),
                       ]),
                 ),
               ),

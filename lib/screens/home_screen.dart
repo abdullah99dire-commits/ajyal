@@ -17,52 +17,82 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = <_Item>[
       _Item('تعليم اللغة العربية', 'الحروف • الكلمات • القراءة', Icons.menu_book,
-          AppColors.green2, () => _open(context, const LettersScreen())),
+          const Color(0xFF2E9E54), () => _open(context, const LettersScreen())),
       _Item('الجزء الرشيدي', 'دروس وتمارين تفاعلية', Icons.auto_stories,
           AppColors.blue, () => _open(context, const RashidiScreen())),
-      _Item('القرآن الكريم', 'سور • حفظ • تلاوة', Icons.mosque,
-          AppColors.purple, () => _open(context, const QuranScreen())),
+      _Item('القرآن الكريم', 'سور • حفظ • تلاوة', Icons.mosque, AppColors.purple,
+          () => _open(context, const QuranScreen())),
       _Item('ألعاب وتدريبات', 'تعلم باللعب', Icons.sports_esports,
           AppColors.orange, () => _open(context, const GamesScreen())),
       _Item('إنجازاتي', 'نقاط • شارات • مستوى', Icons.emoji_events,
-          AppColors.red, () => onTab(1)),
+          AppColors.red, () => onTab(2)),
       _Item('حسابي', 'معلوماتي وتقدمي', Icons.person, AppColors.teal,
-          () => onTab(2)),
+          () => onTab(3)),
     ];
 
     return Scaffold(
       body: SafeArea(
         child: ListenableBuilder(
           listenable: Progress.i,
-          builder: (context, _) => Column(children: [
-            Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
-              child: Row(children: [
-                Image.asset('assets/logo.png', width: 48),
+          builder: (context, _) => ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              Row(children: [
+                const CircleAvatar(
+                  radius: 26,
+                  backgroundColor: Color(0xFFD7ECFF),
+                  child: Text('🧒', style: TextStyle(fontSize: 28)),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text('مرحباً يا ${Progress.i.name} 👋',
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('مرحباً يا ${Progress.i.name}',
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        Row(children: [
+                          const Icon(Icons.star,
+                              color: AppColors.gold, size: 18),
+                          const SizedBox(width: 4),
+                          Text('${Progress.i.points} نقطة'),
+                        ]),
+                      ]),
                 ),
-                Text('⭐ ${Progress.i.points}',
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold)),
               ]),
-            ),
-            Expanded(
-              child: GridView.count(
+              const SizedBox(height: 14),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: SizedBox(
+                  height: 110,
+                  width: double.infinity,
+                  child: Image.asset('assets/images/banner.png',
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                            alignment: Alignment.center,
+                            decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [AppColors.green, AppColors.green2])),
+                            child: const Text('بالعلم نرتقي .. وبالقرآن نحيا',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold)),
+                          )),
+                ),
+              ),
+              const SizedBox(height: 14),
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 2,
-                mainAxisSpacing: 14,
-                crossAxisSpacing: 14,
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 1.0,
                 children: items.map((e) => _Card(e)).toList(),
               ),
-            ),
-          ]),
+            ],
+          ),
         ),
       ),
     );
@@ -82,27 +112,47 @@ class _Card extends StatelessWidget {
   const _Card(this.e);
 
   @override
-  Widget build(BuildContext context) => Material(
-        color: e.color,
-        borderRadius: BorderRadius.circular(20),
-        child: InkWell(
+  Widget build(BuildContext context) => Container(
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          onTap: e.onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(e.icon, size: 48, color: Colors.white),
-              const SizedBox(height: 10),
-              Text(e.title,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold)),
-              Text(e.sub,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white70, fontSize: 12)),
-            ]),
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [e.color, Color.alphaBlend(Colors.black26, e.color)],
+          ),
+        ),
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTap: e.onTap,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(e.icon, size: 46, color: Colors.white),
+                    const SizedBox(height: 8),
+                    Text(e.title,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold)),
+                    Text(e.sub,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            color: Colors.white70, fontSize: 11)),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                          color: Colors.white24, shape: BoxShape.circle),
+                      child: const Icon(Icons.chevron_right,
+                          color: Colors.white, size: 18),
+                    ),
+                  ]),
+            ),
           ),
         ),
       );

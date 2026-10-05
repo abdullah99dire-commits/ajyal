@@ -6,17 +6,19 @@ import '../theme.dart';
 /// كتابة الحرف بالإصبع فوق حرف إرشادي باهت
 class TracingScreen extends StatefulWidget {
   final Letter letter;
-  const TracingScreen({super.key, required this.letter});
+  final VoidCallback? onNext;
+  const TracingScreen({super.key, required this.letter, this.onNext});
   @override
   State<TracingScreen> createState() => _TracingScreenState();
 }
 
 class _TracingScreenState extends State<TracingScreen> {
   final List<List<Offset>> strokes = [];
+  bool done = false;
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: appBar('اكتب الحرف'),
+        appBar: appBar('اكتب الحرف', icon: Icons.edit),
         body: Column(children: [
           Expanded(
             child: Container(
@@ -24,7 +26,7 @@ class _TracingScreenState extends State<TracingScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: AppColors.green2, width: 2),
+                border: Border.all(color: const Color(0xFFD5E5CF), width: 2),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(22),
@@ -32,48 +34,113 @@ class _TracingScreenState extends State<TracingScreen> {
                   Center(
                     child: Text(widget.letter.ch,
                         style: TextStyle(
-                            fontSize: 260,
+                            fontSize: 240,
                             color: Colors.grey.shade300,
                             fontWeight: FontWeight.bold)),
                   ),
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onPanStart: (d) =>
-                        setState(() => strokes.add([d.localPosition])),
-                    onPanUpdate: (d) =>
-                        setState(() => strokes.last.add(d.localPosition)),
+                    onPanStart: done
+                        ? null
+                        : (d) => setState(() => strokes.add([d.localPosition])),
+                    onPanUpdate: done
+                        ? null
+                        : (d) => setState(() => strokes.last.add(d.localPosition)),
                     child: CustomPaint(painter: _Painter(strokes)),
                   ),
                 ]),
               ),
             ),
           ),
+          // سطور التدريب
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(16)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(
+                  3,
+                  (_) => Text(widget.letter.ch,
+                      style: TextStyle(
+                          fontSize: 44, color: Colors.grey.shade300))),
+            ),
+          ),
+          const SizedBox(height: 10),
+          if (done)
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                  color: AppColors.cream, borderRadius: BorderRadius.circular(16)),
+              child: const Row(children: [
+                Text('⭐', style: TextStyle(fontSize: 34)),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('أحسنت!',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.orange)),
+                        Text('لقد أنهيت كتابة الحرف بشكل صحيح'),
+                      ]),
+                ),
+              ]),
+            ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Row(children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => setState(strokes.clear),
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('مسح'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: strokes.isEmpty
-                      ? null
-                      : () {
-                          Progress.i.addPoints(5);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('أحسنت! +5 نقاط ⭐')));
-                          setState(strokes.clear);
-                        },
-                  icon: const Icon(Icons.check),
-                  label: const Text('أنهيت الكتابة'),
-                ),
-              ),
-            ]),
+            padding: const EdgeInsets.all(16),
+            child: done
+                ? SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.green,
+                          padding: const EdgeInsets.symmetric(vertical: 14)),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        widget.onNext?.call();
+                      },
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                                widget.onNext == null
+                                    ? 'رجوع'
+                                    : 'الانتقال إلى الدرس التالي',
+                                style: const TextStyle(fontSize: 16)),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.chevron_right),
+                          ]),
+                    ),
+                  )
+                : Row(children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => setState(strokes.clear),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('مسح'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                            backgroundColor: AppColors.green),
+                        onPressed: strokes.isEmpty
+                            ? null
+                            : () {
+                                Progress.i.addPoints(5);
+                                setState(() => done = true);
+                              },
+                        icon: const Icon(Icons.check),
+                        label: const Text('أنهيت الكتابة'),
+                      ),
+                    ),
+                  ]),
           ),
         ]),
       );
@@ -93,8 +160,7 @@ class _Painter extends CustomPainter {
       ..style = PaintingStyle.stroke;
     for (final s in strokes) {
       if (s.length == 1) {
-        canvas.drawCircle(s.first, 7, paint..style = PaintingStyle.fill);
-        paint.style = PaintingStyle.stroke;
+        canvas.drawCircle(s.first, 7, Paint()..color = AppColors.green);
       } else {
         final path = Path()..moveTo(s.first.dx, s.first.dy);
         for (final p in s.skip(1)) {
