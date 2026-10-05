@@ -3,6 +3,7 @@ import '../services/progress.dart';
 import '../theme.dart';
 import '../widgets.dart';
 import 'achievements_screen.dart';
+import 'admin_screen.dart';
 
 /// حساب الطالب
 class ProfileScreen extends StatelessWidget {
@@ -55,7 +56,7 @@ class ProfileScreen extends StatelessWidget {
                             Text(p.name,
                                 style: const TextStyle(
                                     fontSize: 22, fontWeight: FontWeight.bold)),
-                            const Text('طالب في المدرسة الإسلامية العربية',
+                            Text('${p.age} سنة • الصف ${p.grade} • ${p.gender}',
                                 style: TextStyle(
                                     fontSize: 12, color: Colors.black54)),
                           ]),
@@ -79,7 +80,7 @@ class ProfileScreen extends StatelessWidget {
                         Ring(
                             value: p.rashidiPercent,
                             color: AppColors.blue,
-                            label: 'الجزء الرشيدي'),
+                            label: 'القراءة والاستماع'),
                         Ring(
                             value: p.quranPercent,
                             color: AppColors.orange,
@@ -92,6 +93,15 @@ class ProfileScreen extends StatelessWidget {
                   leading: const Icon(Icons.menu_book, color: AppColors.blue),
                   title: const Text('آخر نشاط'),
                   subtitle: Text(p.lastActivity),
+                ),
+              ),
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.admin_panel_settings_rounded, color: AppColors.green),
+                  title: const Text('دخول الإدارة'),
+                  subtitle: const Text('تعديل بيانات الطلاب ومراجعة النشاط'),
+                  trailing: const Icon(Icons.chevron_left),
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminScreen())),
                 ),
               ),
               Card(

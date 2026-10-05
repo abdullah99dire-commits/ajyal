@@ -3,6 +3,7 @@ import '../services/progress.dart';
 import '../theme.dart';
 import 'letters_screen.dart';
 import 'rashidi_screen.dart';
+import 'reading_screen.dart';
 import 'quran_screen.dart';
 import 'games_screen.dart';
 
@@ -16,10 +17,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = <_Item>[
-      _Item('تعليم اللغة العربية', 'الحروف • الكلمات • القراءة', Icons.menu_book,
+      _Item('اللغة العربية', 'الحروف • الكتابة • الكلمات', Icons.menu_book_rounded,
           const Color(0xFF2E9E54), () => _open(context, const LettersScreen())),
-      _Item('الجزء الرشيدي', 'دروس وتمارين تفاعلية', Icons.auto_stories,
-          AppColors.blue, () => _open(context, const RashidiScreen())),
+      _Item('القراءة والاستماع', 'الحروف • النطق • قصص قصيرة', Icons.headphones_rounded,
+          AppColors.blue, () => _open(context, const ReadingScreen())),
       _Item('القرآن الكريم', 'سور • حفظ • تلاوة', Icons.mosque, AppColors.purple,
           () => _open(context, const QuranScreen())),
       _Item('ألعاب وتدريبات', 'تعلم باللعب', Icons.sports_esports,
@@ -48,14 +49,14 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('مرحباً يا ${Progress.i.name}',
+                        Text('أهلاً ${Progress.i.name} 👋',
                             style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
                         Row(children: [
                           const Icon(Icons.star,
                               color: AppColors.gold, size: 18),
                           const SizedBox(width: 4),
-                          Text('${Progress.i.points} نقطة'),
+                          Text('${Progress.i.points} نقطة • الصف ${Progress.i.grade}'),
                         ]),
                       ]),
                 ),

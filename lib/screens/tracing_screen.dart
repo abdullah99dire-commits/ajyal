@@ -32,11 +32,12 @@ class _TracingScreenState extends State<TracingScreen> {
                 borderRadius: BorderRadius.circular(22),
                 child: Stack(fit: StackFit.expand, children: [
                   Center(
-                    child: Text(widget.letter.ch,
-                        style: TextStyle(
-                            fontSize: 240,
-                            color: Colors.grey.shade300,
-                            fontWeight: FontWeight.bold)),
+                    child: Stack(alignment: Alignment.center, children: [
+                      Text(widget.letter.ch,
+                          style: TextStyle(fontSize: 240, color: Colors.grey.shade300, fontWeight: FontWeight.bold)),
+                      Positioned(top: 70, right: 70, child: _StartArrow(number: '1')),
+                      Positioned(bottom: 105, left: 80, child: _StartArrow(number: '2')),
+                    ]),
                   ),
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
@@ -144,6 +145,16 @@ class _TracingScreenState extends State<TracingScreen> {
           ),
         ]),
       );
+}
+
+
+class _StartArrow extends StatelessWidget {
+  final String number;
+  const _StartArrow({required this.number});
+  @override Widget build(BuildContext context) => Column(children: [
+    Container(width: 28, height: 28, alignment: Alignment.center, decoration: const BoxDecoration(color: AppColors.orange, shape: BoxShape.circle), child: Text(number, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+    const Icon(Icons.south_west_rounded, color: AppColors.orange, size: 34),
+  ]);
 }
 
 class _Painter extends CustomPainter {
