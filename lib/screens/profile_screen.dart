@@ -3,6 +3,7 @@ import '../services/progress.dart';
 import '../theme.dart';
 import '../widgets.dart';
 import 'achievements_screen.dart';
+import 'register_screen.dart';
 
 /// حساب الطالب
 class ProfileScreen extends StatelessWidget {
@@ -28,6 +29,31 @@ class ProfileScreen extends StatelessWidget {
     if (v != null) Progress.i.setName(v);
   }
 
+  Future<void> _newStudent(BuildContext context) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('تسجيل طالب جديد؟'),
+        content: const Text('سيتم حذف بيانات وتقدم الطالب الحالي من هذا الجهاز.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('إلغاء')),
+          FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('نعم، متابعة')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    await Progress.i.reset();
+    if (!context.mounted) return;
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const RegisterScreen()),
+        (r) => false);
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: appBar('حساب الطالب',
@@ -42,10 +68,11 @@ class ProfileScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(14),
                   child: Row(children: [
-                    const CircleAvatar(
+                    CircleAvatar(
                       radius: 36,
-                      backgroundColor: Color(0xFFD7ECFF),
-                      child: Text('🧒', style: TextStyle(fontSize: 40)),
+                      backgroundColor: const Color(0xFFD7ECFF),
+                      child: Text(p.avatarEmoji,
+                          style: const TextStyle(fontSize: 40)),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
@@ -55,8 +82,14 @@ class ProfileScreen extends StatelessWidget {
                             Text(p.name,
                                 style: const TextStyle(
                                     fontSize: 22, fontWeight: FontWeight.bold)),
-                            const Text('طالب في المدرسة الإسلامية العربية',
-                                style: TextStyle(
+                            Text(
+                                (p.age > 0 || p.gradeLabel.isNotEmpty)
+                                    ? [
+                                        if (p.age > 0) '${p.age} سنة',
+                                        if (p.gradeLabel.isNotEmpty) p.gradeLabel
+                                      ].join(' • ')
+                                    : 'طالب في المدرسة الإسلامية العربية',
+                                style: const TextStyle(
                                     fontSize: 12, color: Colors.black54)),
                           ]),
                     ),
@@ -77,9 +110,9 @@ class ProfileScreen extends StatelessWidget {
                             color: AppColors.green2,
                             label: 'العربية'),
                         Ring(
-                            value: p.rashidiPercent,
+                            value: p.readingPercent,
                             color: AppColors.blue,
-                            label: 'الجزء الرشيدي'),
+                            label: 'القراءة والاستماع'),
                         Ring(
                             value: p.quranPercent,
                             color: AppColors.orange,
@@ -129,6 +162,12 @@ class ProfileScreen extends StatelessWidget {
                                   .toList()),
                       ]),
                 ),
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: () => _newStudent(context),
+                icon: const Icon(Icons.person_add),
+                label: const Text('تسجيل طالب جديد'),
               ),
             ]);
           },

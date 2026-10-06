@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/progress.dart';
 import '../theme.dart';
 import 'letters_screen.dart';
-import 'rashidi_screen.dart';
+import 'reading_screen.dart';
 import 'quran_screen.dart';
 import 'games_screen.dart';
 
@@ -18,8 +18,8 @@ class HomeScreen extends StatelessWidget {
     final items = <_Item>[
       _Item('تعليم اللغة العربية', 'الحروف • الكلمات • القراءة', Icons.menu_book,
           const Color(0xFF2E9E54), () => _open(context, const LettersScreen())),
-      _Item('الجزء الرشيدي', 'دروس وتمارين تفاعلية', Icons.auto_stories,
-          AppColors.blue, () => _open(context, const RashidiScreen())),
+      _Item('القراءة والاستماع', 'حروف • قصص • دروس', Icons.headphones,
+          AppColors.blue, () => _open(context, const ReadingScreen())),
       _Item('القرآن الكريم', 'سور • حفظ • تلاوة', Icons.mosque, AppColors.purple,
           () => _open(context, const QuranScreen())),
       _Item('ألعاب وتدريبات', 'تعلم باللعب', Icons.sports_esports,
@@ -38,10 +38,11 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             children: [
               Row(children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 26,
-                  backgroundColor: Color(0xFFD7ECFF),
-                  child: Text('🧒', style: TextStyle(fontSize: 28)),
+                  backgroundColor: const Color(0xFFD7ECFF),
+                  child: Text(Progress.i.avatarEmoji,
+                      style: const TextStyle(fontSize: 28)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

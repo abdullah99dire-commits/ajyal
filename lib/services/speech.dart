@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 /// النطق: الحروف والكلمات بصوت الجهاز (TTS)، والقرآن من تسجيلات EveryAyah
@@ -7,6 +8,9 @@ class Speech {
   static final FlutterTts _tts = FlutterTts();
   static final AudioPlayer _player = AudioPlayer();
   static bool _ready = false;
+
+  /// يُستدعى عند انتهاء قراءة النص (مثلاً نهاية القصة)
+  static VoidCallback? onDone;
 
   // القارئ - غيّره حسب الرغبة (راجع قائمة القراء في موقع everyayah.com)
   static const reciter = 'Alafasy_128kbps';
@@ -18,6 +22,7 @@ class Speech {
     _ready = true;
     await _tts.setLanguage('ar');
     await _tts.setSpeechRate(0.4);
+    _tts.setCompletionHandler(() => onDone?.call());
   }
 
   static Future<void> say(String text) async {

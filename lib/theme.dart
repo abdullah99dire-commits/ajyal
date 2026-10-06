@@ -34,6 +34,16 @@ PreferredSizeWidget appBar(String title,
       backgroundColor: color,
       foregroundColor: Colors.white,
       centerTitle: true,
+      clipBehavior: Clip.antiAlias,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.centerRight,
+            end: Alignment.centerLeft,
+            colors: [color, Color.alphaBlend(Colors.white24, color)],
+          ),
+        ),
+      ),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(18))),
       actions: icon == null
