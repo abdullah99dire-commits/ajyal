@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/progress.dart';
 import '../theme.dart';
+import '../widgets.dart';
 import 'letters_screen.dart';
 import 'reading_screen.dart';
 import 'quran_screen.dart';
@@ -38,12 +39,7 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             children: [
               Row(children: [
-                CircleAvatar(
-                  radius: 26,
-                  backgroundColor: const Color(0xFFD7ECFF),
-                  child: Text(Progress.i.avatarEmoji,
-                      style: const TextStyle(fontSize: 28)),
-                ),
+                Avatar(type: Progress.i.avatar, radius: 26),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -60,26 +56,45 @@ class HomeScreen extends StatelessWidget {
                         ]),
                       ]),
                 ),
+                IconButton(
+                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('لا توجد إشعارات جديدة'))),
+                  icon: const Icon(Icons.notifications_none, size: 28),
+                ),
               ]),
               const SizedBox(height: 14),
               ClipRRect(
                 borderRadius: BorderRadius.circular(18),
                 child: SizedBox(
-                  height: 110,
+                  height: 120,
                   width: double.infinity,
-                  child: Image.asset('assets/images/banner.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
-                            alignment: Alignment.center,
-                            decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                    colors: [AppColors.green, AppColors.green2])),
-                            child: const Text('بالعلم نرتقي .. وبالقرآن نحيا',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold)),
-                          )),
+                  child: Stack(fit: StackFit.expand, children: [
+                    Image.asset('assets/images/banner.png',
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                              decoration: const BoxDecoration(
+                                  gradient: LinearGradient(colors: [
+                                AppColors.green,
+                                AppColors.green2
+                              ])),
+                            )),
+                    const Positioned(
+                      right: 16,
+                      top: 0,
+                      bottom: 0,
+                      child: Center(
+                        child: Text('بالعلم نرتقي ..\nوبالقرآن نحيا',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                height: 1.5,
+                                shadows: [
+                                  Shadow(blurRadius: 8, color: Colors.black54)
+                                ])),
+                      ),
+                    ),
+                  ]),
                 ),
               ),
               const SizedBox(height: 14),

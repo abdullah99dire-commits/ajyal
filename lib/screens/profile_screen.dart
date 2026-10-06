@@ -68,12 +68,7 @@ class ProfileScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(14),
                   child: Row(children: [
-                    CircleAvatar(
-                      radius: 36,
-                      backgroundColor: const Color(0xFFD7ECFF),
-                      child: Text(p.avatarEmoji,
-                          style: const TextStyle(fontSize: 40)),
-                    ),
+                    Avatar(type: p.avatar, radius: 36),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Column(

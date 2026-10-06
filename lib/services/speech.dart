@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 /// النطق: الحروف والكلمات بصوت الجهاز (TTS)، والقرآن من تسجيلات EveryAyah
@@ -23,6 +24,33 @@ class Speech {
     await _tts.setLanguage('ar');
     await _tts.setSpeechRate(0.4);
     _tts.setCompletionHandler(() => onDone?.call());
+  }
+
+  static Set<String> _assets = {};
+
+  /// يقرأ قائمة الملفات المضمّنة (لاستخدام الصوتيات المسجّلة إن وُجدت)
+  static Future<void> init() async {
+    try {
+      final m = await AssetManifest.loadFromAssetBundle(rootBundle);
+      _assets = m.listAssets().toSet();
+    } catch (_) {}
+  }
+
+  static bool hasAsset(String path) => _assets.contains(path);
+
+  static Future<void> playAsset(String path) async {
+    await _tts.stop();
+    await _player.stop();
+    await _player.play(AssetSource(path.replaceFirst('assets/', '')));
+  }
+
+  /// يشغّل الملف المسجّل إن وُجد، وإلا يقرأ النص بصوت الجهاز
+  static Future<void> sayOr(String assetPath, String text) async {
+    if (hasAsset(assetPath)) {
+      await playAsset(assetPath);
+    } else {
+      await say(text);
+    }
   }
 
   static Future<void> say(String text) async {

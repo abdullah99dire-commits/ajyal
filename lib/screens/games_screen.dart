@@ -1,3 +1,4 @@
+import '../widgets.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../data/letters.dart';
@@ -111,7 +112,10 @@ class _GamesScreenState extends State<GamesScreen> {
                           const Text('ما هو الحرف الذي يبدأ به اسم الصورة؟',
                               style: TextStyle(color: Colors.black54)),
                           const SizedBox(height: 16),
-                          Text(target.emoji, style: const TextStyle(fontSize: 100)),
+                          WordPic(
+                              index: letters.indexOf(target),
+                              emoji: target.emoji,
+                              size: 120),
                           Text(target.word,
                               style: const TextStyle(
                                   fontSize: 26, fontWeight: FontWeight.bold)),

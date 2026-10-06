@@ -1,3 +1,4 @@
+import '../widgets.dart';
 import 'package:flutter/material.dart';
 import '../services/name_guess.dart';
 import '../services/progress.dart';
@@ -63,7 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               color: on ? AppColors.green2 : Colors.transparent, width: 2),
         ),
         child: Column(children: [
-          Text(emoji, style: const TextStyle(fontSize: 46)),
+          Avatar(type: key, radius: 34),
           Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         ]),
       ),

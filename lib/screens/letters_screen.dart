@@ -1,3 +1,5 @@
+import '../widgets.dart';
+import '../services/audio_paths.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../data/letters.dart';
@@ -22,7 +24,7 @@ class _LettersScreenState extends State<LettersScreen> {
     setState(() => idx = i);
     Progress.i.markLearned(i);
     Progress.i.setActivity('درس حرف ${letters[i].ch}');
-    Speech.say(letters[i].name);
+    Speech.sayOr(letterAudio(i), letters[i].name);
   }
 
   @override
@@ -102,7 +104,7 @@ class _LettersScreenState extends State<LettersScreen> {
                 style: IconButton.styleFrom(backgroundColor: AppColors.green2),
                 onPressed: () {
                   Progress.i.markLearned(idx);
-                  Speech.say(l.name);
+                  Speech.sayOr(letterAudio(idx), l.name);
                 },
                 icon: const Icon(Icons.volume_up),
               ),
@@ -117,7 +119,7 @@ class _LettersScreenState extends State<LettersScreen> {
             const SizedBox(height: 14),
             InkWell(
               borderRadius: BorderRadius.circular(16),
-              onTap: () => Speech.say(l.word),
+              onTap: () => Speech.sayOr(wordAudio(idx), l.word),
               child: Container(
                 width: 130,
                 padding: const EdgeInsets.all(12),
@@ -127,7 +129,7 @@ class _LettersScreenState extends State<LettersScreen> {
                   border: Border.all(color: const Color(0xFFE5D3A8)),
                 ),
                 child: Column(children: [
-                  Text(l.emoji, style: const TextStyle(fontSize: 54)),
+                  WordPic(index: idx, emoji: l.emoji, size: 70),
                   Text(l.word,
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold)),
@@ -149,7 +151,9 @@ class _LettersScreenState extends State<LettersScreen> {
                             backgroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             side: const BorderSide(color: Color(0xFFD5E5CF))),
-                        onPressed: () => Speech.say('${l.ch}$m'),
+                        onPressed: () => Speech.sayOr(
+                            syllableAudio(idx, ['a', 'i', 'u'][marks.indexOf(m)]),
+                            '${l.ch}$m'),
                         child: Text('${l.ch}$m',
                             style: const TextStyle(
                                 fontSize: 32, color: AppColors.green)),

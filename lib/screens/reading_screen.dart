@@ -1,3 +1,5 @@
+import '../services/audio_paths.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../data/lessons.dart';
 import '../data/letters.dart';
@@ -41,7 +43,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
                   onTap: () {
                     Progress.i.markLearned(i);
                     Progress.i.setActivity('استماع: حرف ${l.ch}');
-                    Speech.say(l.name);
+                    Speech.sayOr(letterAudio(i), l.name);
                   },
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -185,6 +187,7 @@ class StoryScreen extends StatefulWidget {
 
 class _StoryScreenState extends State<StoryScreen> {
   bool playing = false;
+  StreamSubscription<void>? _sub;
 
   @override
   void initState() {
@@ -192,10 +195,14 @@ class _StoryScreenState extends State<StoryScreen> {
     Speech.onDone = () {
       if (mounted) setState(() => playing = false);
     };
+    _sub = Speech.onComplete.listen((_) {
+      if (mounted) setState(() => playing = false);
+    });
   }
 
   @override
   void dispose() {
+    _sub?.cancel();
     Speech.onDone = null;
     Speech.stop();
     super.dispose();
@@ -211,7 +218,7 @@ class _StoryScreenState extends State<StoryScreen> {
     setState(() => playing = true);
     Progress.i.markStory(widget.index);
     Progress.i.setActivity('قصة: ${s.title}');
-    await Speech.say('${s.title}. ${s.text}');
+    await Speech.sayOr(storyAudio(widget.index), '${s.title}. ${s.text}');
   }
 
   @override
