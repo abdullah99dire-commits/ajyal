@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
 import 'home_screen.dart';
-import 'letters_screen.dart';
+import 'journey_screen.dart';
 import 'achievements_screen.dart';
 import 'profile_screen.dart';
 
@@ -19,7 +19,7 @@ class _ShellState extends State<Shell> {
   Widget build(BuildContext context) => Scaffold(
         body: IndexedStack(index: tab, children: [
           HomeScreen(onTab: (i) => setState(() => tab = i)),
-          const LettersScreen(embedded: true),
+          const JourneyScreen(embedded: true),
           const AchievementsScreen(),
           const ProfileScreen(),
         ]),
@@ -29,11 +29,14 @@ class _ShellState extends State<Shell> {
           indicatorColor: AppColors.green2.withAlpha(60),
           onDestinationSelected: (i) => setState(() => tab = i),
           destinations: const [
-            NavigationDestination(icon: Icon(Icons.home), label: 'الرئيسية'),
-            NavigationDestination(icon: Icon(Icons.menu_book), label: 'الدروس'),
             NavigationDestination(
-                icon: Icon(Icons.emoji_events), label: 'التقدير'),
-            NavigationDestination(icon: Icon(Icons.more_horiz), label: 'المزيد'),
+                icon: Text('🏠', style: TextStyle(fontSize: 24)), label: 'الرئيسية'),
+            NavigationDestination(
+                icon: Text('📚', style: TextStyle(fontSize: 24)), label: 'الدروس'),
+            NavigationDestination(
+                icon: Text('🏆', style: TextStyle(fontSize: 24)), label: 'التقدير'),
+            NavigationDestination(
+                icon: Text('😊', style: TextStyle(fontSize: 24)), label: 'المزيد'),
           ],
         ),
       );

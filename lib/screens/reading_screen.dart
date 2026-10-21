@@ -10,6 +10,15 @@ import '../theme.dart';
 import '../widgets.dart';
 
 /// القراءة والاستماع: الحروف (استماع) + القصص القصيرة + الدروس
+const _tilePal = [
+  AppColors.green2,
+  AppColors.blue,
+  AppColors.purple,
+  AppColors.orange,
+  AppColors.red,
+  AppColors.teal,
+];
+
 class ReadingScreen extends StatefulWidget {
   const ReadingScreen({super.key});
   @override
@@ -34,9 +43,10 @@ class _ReadingScreenState extends State<ReadingScreen> {
             itemCount: letters.length,
             itemBuilder: (_, i) {
               final l = letters[i];
+              final tc = _tilePal[i % _tilePal.length];
               return Material(
-                color: Colors.white,
-                elevation: 1.5,
+                color: tc.withAlpha(36),
+                elevation: 0,
                 borderRadius: BorderRadius.circular(18),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(18),
@@ -49,10 +59,10 @@ class _ReadingScreenState extends State<ReadingScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(l.ch,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 38,
-                                color: AppColors.green,
-                                fontWeight: FontWeight.bold)),
+                                color: tc,
+                                fontWeight: FontWeight.w900)),
                         Text(l.name,
                             style: const TextStyle(
                                 fontSize: 12, color: Colors.black54)),

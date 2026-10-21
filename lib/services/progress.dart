@@ -21,6 +21,7 @@ class Progress extends ChangeNotifier {
   Set<int> rashidi = {};
   Set<int> quran = {};
   Set<int> storiesDone = {};
+  Map<int, int> stars = {}; // رقم الحرف -> عدد النجوم (1..3)
 
   String get avatarEmoji =>
       avatar == 'girl' ? '👧' : (avatar == 'boy' ? '👦' : '🧒');
@@ -45,6 +46,11 @@ class Progress extends ChangeNotifier {
     rashidi = _readSet('rashidi');
     quran = _readSet('quran');
     storiesDone = _readSet('stories');
+    stars = {};
+    for (final e in (_p.getStringList('stars') ?? [])) {
+      final kv = e.split(':');
+      if (kv.length == 2) stars[int.parse(kv[0])] = int.parse(kv[1]);
+    }
     notifyListeners();
   }
 
@@ -80,6 +86,7 @@ class Progress extends ChangeNotifier {
     rashidi = {};
     quran = {};
     storiesDone = {};
+    stars = {};
     notifyListeners();
   }
 
@@ -100,6 +107,23 @@ class Progress extends ChangeNotifier {
   void markRashidi(int v) => _first(rashidi, v, 'rashidi', 3);
   void markSurah(int v) => _first(quran, v, 'quran', 3);
   void markStory(int v) => _first(storiesDone, v, 'stories', 3);
+
+  /// عدد الدروس المكتملة بالتتابع من البداية (الدرس التالي مفتوح)
+  int get completed {
+    var n = 0;
+    while (n < 28 && (stars[n] ?? 0) > 0) {
+      n++;
+    }
+    return n;
+  }
+
+  void setStars(int letter, int s) {
+    if ((stars[letter] ?? 0) >= s) return;
+    stars[letter] = s;
+    _p.setStringList(
+        'stars', stars.entries.map((e) => '${e.key}:${e.value}').toList());
+    addPoints(s * 5);
+  }
 
   void setActivity(String a) {
     if (a == lastActivity) return;

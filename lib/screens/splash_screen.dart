@@ -9,6 +9,21 @@ import 'shell.dart';
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
+  static const _ink = Color(0xFF0F5A3A);
+  static const _gold = Color(0xFFD9B766);
+
+  Widget _glow(String t, double size, FontWeight w, Color c) => Text(t,
+      textAlign: TextAlign.center,
+      style: TextStyle(
+          fontSize: size,
+          fontWeight: w,
+          color: c,
+          height: 1.35,
+          shadows: const [
+            Shadow(color: Colors.white70, blurRadius: 10),
+            Shadow(color: Colors.white54, blurRadius: 4),
+          ]));
+
   Widget _cloud(double w) => Container(
         width: w,
         height: w * 0.38,
@@ -62,79 +77,90 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasBg = Speech.hasAsset('assets/images/welcome_bg.png');
+    final bg = Speech.hasAsset('assets/images/welcome_bg.jpg')
+        ? 'assets/images/welcome_bg.jpg'
+        : (Speech.hasAsset('assets/images/welcome_bg.png')
+            ? 'assets/images/welcome_bg.png'
+            : null);
     return Scaffold(
       body: Stack(fit: StackFit.expand, children: [
-        hasBg
-            ? Image.asset('assets/images/welcome_bg.png', fit: BoxFit.cover)
+        bg != null
+            ? Image.asset(bg, fit: BoxFit.cover, alignment: Alignment.center)
             : _fallbackScene(),
         SafeArea(
           child: Column(children: [
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
             Container(
-              padding: const EdgeInsets.all(12),
+              width: 118,
+              height: 118,
               decoration: const BoxDecoration(
-                color: Colors.white,
                 shape: BoxShape.circle,
+                color: Colors.white,
                 boxShadow: [
+                  BoxShadow(
+                      color: Colors.black26, blurRadius: 18, offset: Offset(0, 6))
+                ],
+              ),
+              child: ClipOval(child: Image.asset('assets/logo.png', fit: BoxFit.cover)),
+            ),
+            const SizedBox(height: 10),
+            _glow('المنتدى العربي الألماني', 21, FontWeight.bold, _ink),
+            _glow('في مدينة لاندهوت', 15, FontWeight.w600, Colors.black87),
+            const SizedBox(height: 8),
+            _glow('المدرسة الإسلامية العربية', 28, FontWeight.w800, _ink),
+            _glow('تعلم .. تربية .. قيم', 17, FontWeight.w600, _ink),
+            const Spacer(),
+            Container(
+              margin: const EdgeInsets.fromLTRB(22, 0, 22, 8),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF8E8),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: _gold, width: 2.2),
+                boxShadow: const [
                   BoxShadow(
                       color: Colors.black26, blurRadius: 16, offset: Offset(0, 6))
                 ],
               ),
-              child: Image.asset('assets/logo.png', width: 96),
+              child: const Text(
+                  'مرحباً بك في تطبيق مدرستك الإسلامية\nمعاً نجعل من التعلم رحلة أجمل',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.w700, height: 1.7)),
             ),
-            const SizedBox(height: 8),
-            const Text('المنتدى العربي الألماني',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const Text('في مدينة Landshut',
-                style: TextStyle(fontSize: 14, color: Colors.black54)),
-            const SizedBox(height: 10),
-            const Text('المدرسة الإسلامية العربية',
-                style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.green)),
-            const Text('تعلم .. تربية .. قيم',
-                style: TextStyle(fontSize: 16, color: Colors.black54)),
-            const Spacer(),
             Container(
-              margin: const EdgeInsets.fromLTRB(16, 0, 16, 18),
-              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.fromLTRB(52, 6, 52, 22),
               decoration: BoxDecoration(
-                color: Colors.white.withAlpha(240),
-                borderRadius: BorderRadius.circular(26),
+                borderRadius: BorderRadius.circular(34),
+                border: Border.all(color: _gold, width: 2.6),
+                gradient: const LinearGradient(
+                    colors: [Color(0xFF0F6B45), Color(0xFF0A4F34)]),
                 boxShadow: const [
                   BoxShadow(
-                      color: Colors.black12, blurRadius: 16, offset: Offset(0, 6))
+                      color: Colors.black38, blurRadius: 14, offset: Offset(0, 6))
                 ],
               ),
-              child: Column(children: [
-                const Text('مرحباً بك في تطبيق مدرستك الإسلامية',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                const Text('هيا نبدأ رحلة التعلم معاً'),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.green,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18))),
-                    onPressed: () => _start(context),
-                    child: const Row(
+              child: Material(
+                type: MaterialType.transparency,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(34),
+                  onTap: () => _start(context),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                    child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text('ابدأ الآن',
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold)),
                           SizedBox(width: 8),
-                          Icon(Icons.chevron_right),
+                          Icon(Icons.chevron_right, color: Colors.white, size: 28),
                         ]),
                   ),
                 ),
-              ]),
+              ),
             ),
           ]),
         ),

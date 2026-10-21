@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import '../data/letters.dart';
 import '../services/progress.dart';
 import '../theme.dart';
 import '../widgets.dart';
-import 'letters_screen.dart';
-import 'reading_screen.dart';
-import 'quran_screen.dart';
 import 'games_screen.dart';
+import 'journey_screen.dart';
+import 'lesson_screen.dart';
+import 'quran_screen.dart';
+import 'reading_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final void Function(int) onTab;
@@ -14,21 +16,147 @@ class HomeScreen extends StatelessWidget {
   void _open(BuildContext c, Widget w) =>
       Navigator.push(c, MaterialPageRoute(builder: (_) => w));
 
+  Widget _kid(String file, String emoji, double h) => Image.asset(
+        'assets/images/$file',
+        height: h,
+        errorBuilder: (_, __, ___) =>
+            Text(emoji, style: TextStyle(fontSize: h * 0.6)),
+      );
+
+  Widget _hero(BuildContext context) => Container(
+        height: 250,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF8FD0FF), Color(0xFFE3F4FF), Color(0xFFCFEBB8)],
+          ),
+          boxShadow: const [
+            BoxShadow(color: Colors.black12, blurRadius: 14, offset: Offset(0, 6))
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: Stack(children: [
+            Positioned(
+                top: 12,
+                left: 14,
+                child: Floaty(dy: 5, child: const Text('☁️', style: TextStyle(fontSize: 34)))),
+            Positioned(
+                top: 60,
+                right: 16,
+                child: Floaty(
+                    dy: 7,
+                    duration: const Duration(milliseconds: 2300),
+                    child: const Text('⭐', style: TextStyle(fontSize: 26)))),
+            Positioned(
+                top: 96,
+                left: 22,
+                child: Floaty(
+                    dy: 6,
+                    duration: const Duration(milliseconds: 2000),
+                    child: const Text('✨', style: TextStyle(fontSize: 22)))),
+            Positioned(
+              top: 14,
+              left: 40,
+              right: 40,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: const [
+                    BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 3))
+                  ],
+                ),
+                child: Text('أهلاً يا ${Progress.i.name}! 👋\nهيا نتعلم معاً اليوم',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w800, height: 1.5)),
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Floaty(dy: 4, child: _kid('boy_cut.png', '👦', 165)),
+                  const SizedBox(width: 6),
+                  Floaty(
+                      dy: 4,
+                      duration: const Duration(milliseconds: 2100),
+                      child: _kid('girl_cut.png', '👧', 158)),
+                ],
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 34,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Color(0xFF8FCB6B),
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.elliptical(260, 34)),
+                ),
+              ),
+            ),
+          ]),
+        ),
+      );
+
+  Widget _continueButton(BuildContext context) {
+    final done = Progress.i.completed;
+    final all = done >= letters.length;
+    final next = all ? 0 : done;
+    return Bouncy(
+      onTap: () => _open(context, LessonScreen(index: next)),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: const Color(0xFFD9B766), width: 2.4),
+          gradient: const LinearGradient(
+              colors: [Color(0xFF0F6B45), Color(0xFF0A4F34)]),
+          boxShadow: const [
+            BoxShadow(color: Colors.black26, blurRadius: 12, offset: Offset(0, 5))
+          ],
+        ),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Icon(Icons.play_circle_fill, color: Colors.white, size: 30),
+          const SizedBox(width: 10),
+          Text(
+              all
+                  ? 'أنهيت الرحلة! ابدأ من جديد 🎉'
+                  : (done == 0
+                      ? 'ابدأ رحلة الحروف'
+                      : 'تابع رحلتك: حرف ${letters[next].ch}'),
+              style: const TextStyle(
+                  color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800)),
+        ]),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final items = <_Item>[
-      _Item('تعليم اللغة العربية', 'الحروف • الكلمات • القراءة', Icons.menu_book,
-          const Color(0xFF2E9E54), () => _open(context, const LettersScreen())),
-      _Item('القراءة والاستماع', 'حروف • قصص • دروس', Icons.headphones,
-          AppColors.blue, () => _open(context, const ReadingScreen())),
-      _Item('القرآن الكريم', 'سور • حفظ • تلاوة', Icons.mosque, AppColors.purple,
+      _Item('تعليم الحروف', 'دروس قصيرة بالصوت والصورة', '🔤', AppColors.green2,
+          () => _open(context, const JourneyScreen())),
+      _Item('القراءة والاستماع', 'حروف • قصص • دروس', '🎧', AppColors.blue,
+          () => _open(context, const ReadingScreen())),
+      _Item('القرآن الكريم', 'سور • حفظ • تلاوة', '🕌', AppColors.purple,
           () => _open(context, const QuranScreen())),
-      _Item('ألعاب وتدريبات', 'تعلم باللعب', Icons.sports_esports,
-          AppColors.orange, () => _open(context, const GamesScreen())),
-      _Item('إنجازاتي', 'نقاط • شارات • مستوى', Icons.emoji_events,
-          AppColors.red, () => onTab(2)),
-      _Item('حسابي', 'معلوماتي وتقدمي', Icons.person, AppColors.teal,
-          () => onTab(3)),
+      _Item('ألعاب وتدريبات', 'تعلم باللعب', '🎮', AppColors.orange,
+          () => _open(context, const GamesScreen())),
+      _Item('إنجازاتي', 'نقاط • شارات • مستوى', '🏆', AppColors.red,
+          () => onTab(2)),
+      _Item('حسابي', 'معلوماتي وتقدمي', '😊', AppColors.teal, () => onTab(3)),
     ];
 
     return Scaffold(
@@ -36,75 +164,45 @@ class HomeScreen extends StatelessWidget {
         child: ListenableBuilder(
           listenable: Progress.i,
           builder: (context, _) => ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
             children: [
               Row(children: [
-                Avatar(type: Progress.i.avatar, radius: 26),
-                const SizedBox(width: 12),
+                Avatar(type: Progress.i.avatar, radius: 24),
+                const SizedBox(width: 10),
                 Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('مرحباً يا ${Progress.i.name}',
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        Row(children: [
-                          const Icon(Icons.star,
-                              color: AppColors.gold, size: 18),
-                          const SizedBox(width: 4),
-                          Text('${Progress.i.points} نقطة'),
-                        ]),
-                      ]),
+                  child: Text('مرحباً يا ${Progress.i.name}',
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w800)),
                 ),
-                IconButton(
-                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('لا توجد إشعارات جديدة'))),
-                  icon: const Icon(Icons.notifications_none, size: 28),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: const [
+                        BoxShadow(color: Colors.black12, blurRadius: 6)
+                      ]),
+                  child: Row(children: [
+                    const Icon(Icons.star_rounded, color: AppColors.gold),
+                    const SizedBox(width: 4),
+                    Text('${Progress.i.points}',
+                        style: const TextStyle(fontWeight: FontWeight.w900)),
+                  ]),
                 ),
               ]),
               const SizedBox(height: 14),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(18),
-                child: SizedBox(
-                  height: 120,
-                  width: double.infinity,
-                  child: Stack(fit: StackFit.expand, children: [
-                    Image.asset('assets/images/banner.png',
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                              decoration: const BoxDecoration(
-                                  gradient: LinearGradient(colors: [
-                                AppColors.green,
-                                AppColors.green2
-                              ])),
-                            )),
-                    const Positioned(
-                      right: 16,
-                      top: 0,
-                      bottom: 0,
-                      child: Center(
-                        child: Text('بالعلم نرتقي ..\nوبالقرآن نحيا',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                height: 1.5,
-                                shadows: [
-                                  Shadow(blurRadius: 8, color: Colors.black54)
-                                ])),
-                      ),
-                    ),
-                  ]),
-                ),
-              ),
+              _hero(context),
               const SizedBox(height: 14),
+              _continueButton(context),
+              const SizedBox(height: 16),
               GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 2,
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
-                childAspectRatio: 1.0,
+                childAspectRatio: 0.98,
                 children: items.map((e) => _Card(e)).toList(),
               ),
             ],
@@ -116,11 +214,10 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _Item {
-  final String title, sub;
-  final IconData icon;
+  final String title, sub, emoji;
   final Color color;
   final VoidCallback onTap;
-  _Item(this.title, this.sub, this.icon, this.color, this.onTap);
+  _Item(this.title, this.sub, this.emoji, this.color, this.onTap);
 }
 
 class _Card extends StatelessWidget {
@@ -128,47 +225,54 @@ class _Card extends StatelessWidget {
   const _Card(this.e);
 
   @override
-  Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [e.color, Color.alphaBlend(Colors.black26, e.color)],
-          ),
-        ),
-        child: Material(
-          type: MaterialType.transparency,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(20),
-            onTap: e.onTap,
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(e.icon, size: 46, color: Colors.white),
-                    const SizedBox(height: 8),
-                    Text(e.title,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold)),
-                    Text(e.sub,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            color: Colors.white70, fontSize: 11)),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                          color: Colors.white24, shape: BoxShape.circle),
-                      child: const Icon(Icons.chevron_right,
-                          color: Colors.white, size: 18),
-                    ),
-                  ]),
+  Widget build(BuildContext context) => Bouncy(
+        onTap: e.onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(26),
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [e.color, Color.alphaBlend(Colors.black26, e.color)],
             ),
+            boxShadow: [
+              BoxShadow(
+                  color: e.color.withAlpha(110),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6))
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(26),
+            child: Stack(children: [
+              Positioned(
+                left: -8,
+                bottom: -14,
+                child: Opacity(
+                    opacity: 0.16,
+                    child: Text(e.emoji, style: const TextStyle(fontSize: 96))),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      EmojiBadge(emoji: e.emoji, color: Colors.white, size: 62),
+                      const SizedBox(height: 10),
+                      Text(e.title,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w900)),
+                      const SizedBox(height: 2),
+                      Text(e.sub,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              color: Colors.white70, fontSize: 11)),
+                    ]),
+              ),
+            ]),
           ),
         ),
       );

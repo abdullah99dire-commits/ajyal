@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class AppColors {
   static const green = Color(0xFF0F6B45); // أخضر داكن (الشريط العلوي)
   static const green2 = Color(0xFF2E9E54);
-  static const bg = Color(0xFFF4F8EE);
+  static const bg = Color(0xFFF6F8EC);
   static const cream = Color(0xFFFFF6DC);
   static const gold = Color(0xFFF5B82E);
   static const blue = Color(0xFF2F8FE5);
